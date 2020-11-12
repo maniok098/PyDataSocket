@@ -1,13 +1,21 @@
 # PyDataSocket
-This module provides an extremely easy to use python implementation of TCP Sockets for sending data. The supported data formats are anything that is json-serializable when using the ```DataSocket.JSON``` mode or anything that can be converted to a numpy array when using the ```DataSocket.NUMPY``` mode. This implementation utilizes threading so they are non-blocking. See the [examples](https://github.com/psomers3/PyDataSocket/tree/master/examples) for how to use.
+This module provides the implementation of sending raw data in Python and receiving raw data in Matlab. The bytes-like socket objects are directly transmitted from Python to Matlab without any processing. Meanwhile, the encoding/decoding process for the original data is accomplished by user-defined function in "main.py"/"main.m".
 
 ## Install
-- ```git clone https://github.com/psomers3/PyDataSocket.git```
-- ```cd PyDataSocket```
-- ```pip install .```
+This module has not been packaged, and there is no need to install.
 
-## SendSocket()
-The send socket is where the data form to use (JSON or NUMPY) is set and then informs the connecting RecieveSocket upon a successful connection. Data can be sent using ```SendSocket.send_data()```.
+## Basic procedure
+1) open "main.m" in Matlab, check the ip and port
+2) run "main.m" to start receiving data in Matlab
+3) open "main.py" in Python, check the ip and port and edit "send_sig()" if necessary
+4) run "main.py" to start sending data in Python
+5) enjoy your data
 
-## ReceiveSocket()
-The data recieved by the receive socket is accessed by assigning a function to ```handler_function``` upon creation that will be called everytime a new chunk of data is recieved. This is run on a separate thread, so it will not block more incoming data, but it is recommended to keep the assigned function as short as possible.
+## SendSocket() in Python
+The bytes-like socket object is directly sent to Matlab without processing. The original data should be preprocessed and converted to bytes-like object by user-defined function in "main.py".
+
+## ReceiveSocket() in Matlab
+The bytes-like socket object is directly received from Python without processing. The callback function will be called everytime a new chunk of data is recieved. And the callback function is defined by users in "main.m" in order to process the RAW data.
+
+## Dataflow
+original data --> json --> bytes --> server --> client --> bytes --> json --> original data 
